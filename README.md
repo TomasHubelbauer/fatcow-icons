@@ -1,6 +1,6 @@
 # FatCow Icons
 
-This is a set of icons from FatCow made available for free.
+This is a set of iconsfrom FatCow at version 3.9.2 made available for free.
 
 The original home of these icons is at https://www.fatcow.com/free-icons.
 
