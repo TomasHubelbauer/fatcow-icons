@@ -1,0 +1,27 @@
+body {
+  font: normal 16px sans-serif;
+}
+
+img {
+  margin: 1ex;
+  vertical-align: middle;
+}
+
+img:not([src]) {
+  cursor: wait;
+}
+
+img.icon16 {
+  height: 16px;
+  width: 16px;
+}
+
+img.icon32 {
+  height: 32px;
+  width: 32px;
+}
+
+a {
+  padding: 0 1em;
+  vertical-align: middle;
+}
