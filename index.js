@@ -20,6 +20,9 @@ window.addEventListener('load', async () => {
   }
 
   const iconsDiv = document.getElementById('iconsDiv');
+  iconsDiv.innerHTML = '';
+  
+  let counter = 0;
   for (let fileName of fileNames) {
     const icon16Img = document.createElement('img');
     icon16Img.title = fileName + ' 16';
@@ -58,6 +61,12 @@ window.addEventListener('load', async () => {
     ico32A.download = '32-' + fileName + '.ico';
 
     iconsDiv.append(icon16Img, icon32Img, png16A, png32A, ico16A, ico32A, document.createTextNode(fileName), document.createElement('br'));
+    counter++;
+    
+    // Give the browser a chance to breather every few icons
+    if (counter % 100 === 0) {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
   }
 });
 
