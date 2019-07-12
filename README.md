@@ -6,6 +6,8 @@ The original home of these icons is at https://www.fatcow.com/free-icons.
 
 **I am allowed to host these icons here by the FatCow support.**
 
+To run locally run `npx serve .` so that `fetch` works (not allowed in `file://`).
+
 ## To-Do
 
 Consider detecting scroll direction (up ro down) and rendering the virtual list
