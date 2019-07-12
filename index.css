@@ -21,7 +21,7 @@ input {
 }
 
 .iconDiv img {
-  margin: 0 1ex;
+  margin-right: 1ex;
 }
 
 .iconDiv img.icon16 {
@@ -36,7 +36,7 @@ input {
 
 .iconDiv a {
   font-size: smaller;
-  margin: 0 1ex;
+  margin-left: 1ex;
   text-align: center;
   white-space: pre;
 }
