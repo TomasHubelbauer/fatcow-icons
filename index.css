@@ -2,8 +2,7 @@ body {
   font: normal 16px sans-serif;
 }
 
-h1 a {
-  color: black;
+a {
   text-decoration: none;
 }
 
