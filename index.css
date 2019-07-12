@@ -2,26 +2,28 @@ body {
   font: normal 16px sans-serif;
 }
 
-img {
-  margin: 1ex;
-  vertical-align: middle;
+.iconDiv {
+  align-items: center;
+  display: flex;
+  height: 32px;
+  overflow: hidden;
+  width: 100%;
 }
 
-img:not([src]) {
-  cursor: wait;
+.iconDiv img {
+  margin: 0 1ex;
 }
 
-img.icon16 {
+.iconDiv img.icon16 {
   height: 16px;
   width: 16px;
 }
 
-img.icon32 {
+.iconDiv img.icon32 {
   height: 32px;
   width: 32px;
 }
 
-a {
-  padding: 0 1em;
-  vertical-align: middle;
+.iconDiv a {
+  margin: 0 1ex;
 }

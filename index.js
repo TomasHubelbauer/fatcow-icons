@@ -7,69 +7,121 @@ window.addEventListener('load', async () => {
   let fileNames = text.split('\n');
 
   // Remove the last element caused by the newline at the end of the file
-  fileNames.pop();
+  // Do this at runtime because it's too easy to not notice an IDE added it
+  if (fileNames[fileNames.length - 1] === '') {
+    fileNames.pop();
+  }
 
   if (location.search) {
     const filter = new URLSearchParams(location.search).get('search');
     fileNames = fileNames.filter(fileName => fileName.includes(filter));
 
     document.getElementsByName('search')[0].value = filter;
-    resultsDiv.textContent = `Found ${fileNames.length} icons matching "${filter}". Hover over the icons to load them.`;
+    resultsDiv.textContent = `Showing ${fileNames.length} matching icons`;
   } else {
-    resultsDiv.textContent = `There are ${fileNames.length} icons in the FatCow icon set v3.9.2. Hover over the icons to load them.`;
+    resultsDiv.textContent = `Showing all ${fileNames.length} icons`;
   }
 
-  const iconsDiv = document.getElementById('iconsDiv');
-  iconsDiv.innerHTML = '';
-  
-  let counter = 0;
-  for (let fileName of fileNames) {
-    const icon16Img = document.createElement('img');
-    icon16Img.title = fileName + ' 16';
-    icon16Img.className = 'icon16';
-    icon16Img.dataset.src = '16-png/' + fileName + '.png';
-    icon16Img.addEventListener('pointerover', handleIconHover);
-
-    const icon32Img = document.createElement('img');
-    icon32Img.title = fileName + ' 32';
-    icon32Img.className = 'icon32';
-    icon32Img.dataset.src = '32-png/' + fileName + '.png';
-    icon32Img.addEventListener('pointerover', handleIconHover);
-
-    const png16A = document.createElement('a');
-    png16A.textContent = '16 PNG';
-    png16A.href = '16-png/' + fileName + '.png';
-    png16A.target = '_blank';
-    png16A.download = '16-' + fileName + '.png';
-
-    const png32A = document.createElement('a');
-    png32A.textContent = '32 PNG';
-    png32A.href = '32-png/' + fileName + '.png';
-    png32A.target = '_blank';
-    png32A.download = '32-' + fileName + '.png';
-
-    const ico16A = document.createElement('a');
-    ico16A.textContent = '16 ico';
-    ico16A.href = '16-ico/' + fileName + '.ico';
-    ico16A.target = '_blank';
-    ico16A.download = '16-' + fileName + '.ico';
-
-    const ico32A = document.createElement('a');
-    ico32A.textContent = '32 ico';
-    ico32A.href = '32-ico/' + fileName + '.ico';
-    ico32A.target = '_blank';
-    ico32A.download = '32-' + fileName + '.ico';
-
-    iconsDiv.append(icon16Img, icon32Img, png16A, png32A, ico16A, ico32A, document.createTextNode(fileName), document.createElement('br'));
-    counter++;
-    
-    // Give the browser a chance to breather every few icons
-    if (counter % 100 === 0) {
-      await new Promise(resolve => setTimeout(resolve, 0));
-    }
-  }
+  renderList(fileNames);
+  windowList();
+  window.addEventListener('scroll', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
 });
 
-function handleIconHover() {
-  event.currentTarget.src = event.currentTarget.dataset.src;
+function renderList(fileNames) {
+  const iconsDiv = document.getElementById('iconsDiv');
+  iconsDiv.innerHTML = '';
+
+  const fragment = document.createDocumentFragment();
+
+  for (let fileName of fileNames) {
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'iconDiv';
+    iconDiv.id = fileName;
+    fragment.append(iconDiv);
+  }
+
+  iconsDiv.append(fragment);
+}
+
+function renderItem(fileName) {
+  const iconDiv = document.getElementById(fileName);
+
+  // Double check the element is still on the screen since it has been requested
+  const boundingClientRect = iconDiv.getBoundingClientRect();
+  if (boundingClientRect.bottom < 0 && boundingClientRect.top > window.innerHeight) {
+    // Bail if the element has not been on the screen long enough
+    return;
+  }
+
+  if (iconDiv.textContent !== '') {
+    // Bail since this item has already been rendered
+    return;
+  }
+
+  const icon16Img = document.createElement('img');
+  icon16Img.title = fileName + ' 16';
+  icon16Img.className = 'icon16';
+  icon16Img.src = '16-png/' + fileName + '.png';
+
+  const icon32Img = document.createElement('img');
+  icon32Img.title = fileName + ' 32';
+  icon32Img.className = 'icon32';
+  icon32Img.src = '32-png/' + fileName + '.png';
+
+  const png16A = document.createElement('a');
+  png16A.textContent = '16 PNG';
+  png16A.href = '16-png/' + fileName + '.png';
+  png16A.target = '_blank';
+  png16A.download = '16-' + fileName + '.png';
+
+  const png32A = document.createElement('a');
+  png32A.textContent = '32 PNG';
+  png32A.href = '32-png/' + fileName + '.png';
+  png32A.target = '_blank';
+  png32A.download = '32-' + fileName + '.png';
+
+  const ico16A = document.createElement('a');
+  ico16A.textContent = '16 ICO';
+  ico16A.href = '16-ico/' + fileName + '.ico';
+  ico16A.target = '_blank';
+  ico16A.download = '16-' + fileName + '.ico';
+
+  const ico32A = document.createElement('a');
+  ico32A.textContent = '32 ICO';
+  ico32A.href = '32-ico/' + fileName + '.ico';
+  ico32A.target = '_blank';
+  ico32A.download = '32-' + fileName + '.ico';
+
+  iconDiv.append(icon16Img, icon32Img, document.createTextNode(fileName), png16A, png32A, ico16A, ico32A);
+}
+
+let scrollTimeout;
+
+function windowList() {
+  for (const iconDiv of document.getElementsByClassName('iconDiv')) {
+    const boundingClientRect = iconDiv.getBoundingClientRect();
+    if (boundingClientRect.bottom >= 0 && boundingClientRect.top <= window.innerHeight) {
+      if (iconDiv.textContent === '') {
+        // Render the item if it sticks on the screen for at least tenth of a second
+        window.setTimeout(renderItem, 100, iconDiv.id);
+      }
+    } else {
+      if (iconDiv.textContent !== '') {
+        // Clear the element if rendered but not visible
+        iconDiv.textContent = '';
+      }
+    }
+  }
+
+  // Mark the timeout as expired so another scroll stroke can initiate a render
+  scrollTimeout = undefined;
+}
+
+function handleWindowScroll() {
+  if (!scrollTimeout) {
+    scrollTimeout = window.setTimeout(windowList, 100);
+    return;
+  }
+
+  // Ignore this scroll stroke if we are already set to render
 }
