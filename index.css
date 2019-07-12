@@ -15,9 +15,9 @@ input {
 .iconDiv {
   align-items: center;
   display: flex;
-  height: 32px;
+  /* Use fixed height for fast layout calculation */
+  height: 40px;
   overflow: hidden;
-  width: 100%;
 }
 
 .iconDiv img {
