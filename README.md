@@ -30,3 +30,6 @@ in the local storage should be sufficient.
 Consider aliasing icons with common synonyms (how to tell? Google Analytics for
 when a user adds a custom alias?) by default by placing another file in the repo
 with the aliases or adding it to `filenames.txt`.
+
+Figure out why the multi-column layout doesn't kick in in iOS Safari in landscape
+despite the CSS media query looking correct.
