@@ -1,12 +1,19 @@
 # FatCow Icons
 
-This is a set of iconsfrom FatCow at version 3.9.2 made available for free.
+[**LIVE**](https://tomashubelbauer.github.io/fatcow-icons)
+
+This is a set of icons from FatCow (v3.9.2 - latest) made available as a web app.
 
 The original home of these icons is at https://www.fatcow.com/free-icons.
 
 **I am allowed to host these icons here by the FatCow support.**
 
-To run locally run `npx serve .` so that `fetch` works (not allowed in `file://`).
+The reason this exists is because downloading the archive from Fatcow and unpacking
+it just to grab a single icon every now and then is a major pain for me.
+
+This web app makes it much more convenient.
+
+To run locally, use `npx serve .` so that `fetch` works (disallowed in `file://`).
 
 ## To-Do
 
