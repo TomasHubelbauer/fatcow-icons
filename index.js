@@ -68,6 +68,9 @@ function renderItem(fileName) {
   icon32Img.className = 'icon32';
   icon32Img.src = '32-png/' + fileName + '.png';
 
+  const nameSpan = document.createElement('span');
+  nameSpan.textContent = fileName.replace(/_/g, ' ');
+
   const png16A = document.createElement('a');
   png16A.textContent = '16\npng';
   png16A.href = '16-png/' + fileName + '.png';
@@ -92,7 +95,7 @@ function renderItem(fileName) {
   ico32A.target = '_blank';
   ico32A.download = '32-' + fileName + '.ico';
 
-  iconDiv.append(icon16Img, icon32Img, document.createTextNode(fileName), png16A, png32A, ico16A, ico32A);
+  iconDiv.append(icon16Img, icon32Img, nameSpan, png16A, png32A, ico16A, ico32A);
 }
 
 let scrollTimeout;
