@@ -2,6 +2,11 @@ body {
   font: normal 16px sans-serif;
 }
 
+input {
+  /* Prevent mobile Safari auto-zoom */
+  font-size: 16px;
+}
+
 .iconDiv {
   align-items: center;
   display: flex;
