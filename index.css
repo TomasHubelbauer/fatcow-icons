@@ -21,6 +21,7 @@ input {
 }
 
 .iconDiv img {
+  flex-shrink: 0;
   margin-right: 1ex;
 }
 
