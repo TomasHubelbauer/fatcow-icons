@@ -13,8 +13,8 @@ window.addEventListener('load', async () => {
   }
 
   if (location.search) {
-    const filter = new URLSearchParams(location.search).get('search');
-    fileNames = fileNames.filter(fileName => fileName.toUpperCase().includes(filter.toUpperCase()));
+    const filter = new URLSearchParams(location.search).get('search').trim().toUpperCase();
+    fileNames = fileNames.filter(fileName => fileName.toUpperCase().includes(filter));
 
     document.getElementsByName('search')[0].value = filter;
     resultsDiv.textContent = `Showing ${fileNames.length} matching icons`;
