@@ -1,5 +1,7 @@
 body {
   font: normal 16px sans-serif;
+  /* Prevent font scaling in landscape while allowing user zoom */
+  -webkit-text-size-adjust: 100%;
 }
 
 a {
