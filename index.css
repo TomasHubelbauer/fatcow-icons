@@ -2,6 +2,11 @@ body {
   font: normal 16px sans-serif;
 }
 
+h1 a {
+  color: black;
+  text-decoration: none;
+}
+
 input {
   /* Prevent mobile Safari auto-zoom */
   font-size: 16px;
@@ -30,5 +35,7 @@ input {
 }
 
 .iconDiv a {
+  font-size: smaller;
   margin: 0 1ex;
+  white-space: pre;
 }
