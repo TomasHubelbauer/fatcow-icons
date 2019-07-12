@@ -25,6 +25,9 @@ window.addEventListener('load', async () => {
   renderList(fileNames);
   windowList();
   window.addEventListener('scroll', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
+
+  // Handle `resize` for debugging responsive layout, no harm done leaving this in
+  window.addEventListener('resize', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
 });
 
 function renderList(fileNames) {

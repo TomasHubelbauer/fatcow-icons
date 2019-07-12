@@ -19,6 +19,14 @@ input {
   overflow: hidden;
 }
 
+@media all and (min-width: 640px) {
+  .iconDiv {
+    display: inline-flex;
+    margin-right: 1ex;
+    width: 320px;
+  }
+}
+
 .iconDiv img {
   flex-shrink: 0;
   margin-right: 1ex;
@@ -32,6 +40,10 @@ input {
 .iconDiv img.icon32 {
   height: 32px;
   width: 32px;
+}
+
+.iconDiv span {
+  flex: 1;
 }
 
 .iconDiv a {
