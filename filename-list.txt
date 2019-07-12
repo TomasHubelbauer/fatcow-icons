@@ -29,7 +29,7 @@ add_package
 administrator
 advanced_data_grid
 advanced_dns_zone_editor
-advertising
+adverting
 after_delete
 after_insert
 after_update
@@ -1840,7 +1840,7 @@ globe_network
 globe_place
 gnupg_keys
 google
-google_adsense
+google_sense
 google_custom_search
 google_map
 google_map_satellite

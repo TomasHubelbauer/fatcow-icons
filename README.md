@@ -15,6 +15,9 @@ This web app makes it much more convenient.
 
 To run locally, use `npx serve .` so that `fetch` works (disallowed in `file://`).
 
+**Note:** `google_adsense` is renamed to `google_sense` and `avertising` is to
+`vertising` to avoid having the images blocked by uBlock Origin!
+
 ## To-Do
 
 Consider detecting scroll direction (up ro down) and rendering the virtual list
