@@ -69,25 +69,25 @@ function renderItem(fileName) {
   icon32Img.src = '32-png/' + fileName + '.png';
 
   const png16A = document.createElement('a');
-  png16A.textContent = '16\nPNG';
+  png16A.textContent = '16\npng';
   png16A.href = '16-png/' + fileName + '.png';
   png16A.target = '_blank';
   png16A.download = '16-' + fileName + '.png';
 
   const png32A = document.createElement('a');
-  png32A.textContent = '32\nPNG';
+  png32A.textContent = '32\npng';
   png32A.href = '32-png/' + fileName + '.png';
   png32A.target = '_blank';
   png32A.download = '32-' + fileName + '.png';
 
   const ico16A = document.createElement('a');
-  ico16A.textContent = '16\nICO';
+  ico16A.textContent = '16\nico';
   ico16A.href = '16-ico/' + fileName + '.ico';
   ico16A.target = '_blank';
   ico16A.download = '16-' + fileName + '.ico';
 
   const ico32A = document.createElement('a');
-  ico32A.textContent = '32\nICO';
+  ico32A.textContent = '32\nico';
   ico32A.href = '32-ico/' + fileName + '.ico';
   ico32A.target = '_blank';
   ico32A.download = '32-' + fileName + '.ico';
