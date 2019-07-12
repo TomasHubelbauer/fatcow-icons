@@ -19,11 +19,11 @@ input {
   overflow: hidden;
 }
 
-@media all and (min-width: 640px) {
+@media all and (min-width: 610px) {
   .iconDiv {
     display: inline-flex;
     margin-right: 1ex;
-    width: 320px;
+    width: 300px;
   }
 }
 
