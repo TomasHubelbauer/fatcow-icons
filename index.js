@@ -102,9 +102,14 @@ function renderItem(fileName) {
 }
 
 let scrollTimeout;
-
+let lastScroll;
 function windowList() {
-  for (const iconDiv of document.getElementsByClassName('iconDiv')) {
+  const iconDivs = [...document.getElementsByClassName('iconDiv')];
+  if (window.scrollY < lastScroll) {
+    iconDivs.reverse();
+  }
+
+  for (const iconDiv of iconDivs) {
     const boundingClientRect = iconDiv.getBoundingClientRect();
     if (boundingClientRect.bottom >= 0 && boundingClientRect.top <= window.innerHeight) {
       if (iconDiv.textContent === '') {
@@ -121,6 +126,7 @@ function windowList() {
 
   // Mark the timeout as expired so another scroll stroke can initiate a render
   scrollTimeout = undefined;
+  lastScroll = window.scrollY;
 }
 
 function handleWindowScroll() {

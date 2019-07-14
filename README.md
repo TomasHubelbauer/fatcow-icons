@@ -20,9 +20,6 @@ To run locally, use `npx serve .` so that `fetch` works (disallowed in `file://`
 
 ## To-Do
 
-Consider detecting scroll direction (up ro down) and rendering the virtual list
-window in that direction as well to make scrolling up appear a bit nicer.
-
 Consider allowing to associate custom aliases with the icons which would be taken
 into an account in search. This would be helpful with synonyms etc. Storing it
 in the local storage should be sufficient.
