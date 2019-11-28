@@ -20,18 +20,21 @@ To run locally, use `npx serve .` so that `fetch` works (disallowed in `file://`
 
 ## To-Do
 
-Consider allowing to associate custom aliases with the icons which would be taken
-into an account in search. This would be helpful with synonyms etc. Storing it
-in the local storage should be sufficient.
+### Consider allowing to associate custom aliases with the icons which
 
-Consider aliasing icons with common synonyms (how to tell? Google Analytics for
-when a user adds a custom alias?) by default by placing another file in the repo
-with the aliases or adding it to `filenames.txt`.
+These would be taken into an account in search. This would be helpful with synonyms etc.
+Storing it in the local storage should be sufficient.
 
-Figure out why the multi-column layout doesn't kick in in iOS Safari in landscape
-despite the CSS media query looking correct.
+### Consider aliasing icons with common synonyms
 
-Add a screenshot and a script to generate one.
+(how to tell? Google Analytics for when a user adds a custom alias?) by default by
+placing another file in the repo with the aliases or adding it to `filenames.txt`.
+
+### Figure out why the multi-column layout doesn't kick in in iOS Safari in landscape
+
+This is despite the CSS media query looking correct.
+
+### Add a screenshot and a script to generate one
 
 Update the form to do the search inline and update the URL using `replaceState` to
 not pollute history.
