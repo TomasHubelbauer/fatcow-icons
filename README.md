@@ -38,3 +38,10 @@ This is despite the CSS media query looking correct.
 
 Update the form to do the search inline and update the URL using `replaceState` to
 not pollute history.
+
+### Consider versioning only the ZIP archive and range-fetch requesting icon slices
+
+The archive ZIP would replace the individual files in the repository and UZIP would
+be used to unpack the PNG content which could then be downloaded as a blob.
+
+Maybe also reset history to make cloning possible again…
