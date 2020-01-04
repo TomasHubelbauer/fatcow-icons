@@ -264,6 +264,7 @@ function windowList() {
     } else {
       if (iconDiv.textContent !== '') {
         // Clear the element if rendered but not visible
+        // TODO: Properly dispose of the img URLs here to avoid leaking memory
         iconDiv.textContent = '';
       }
     }

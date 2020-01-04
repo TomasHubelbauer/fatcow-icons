@@ -55,3 +55,19 @@ around forever, this should be a non-issue.
 
 I don't personally use them, but someone might find that useful. I've removed
 their archives from the repository until this is done.
+
+### Avoid leaking object URL memory when destroying `imgs` emptying their `divs`
+
+### Add custom icons made in this same style for the things I'm missing
+
+Document which come from where.
+
+This is maybe another point for loading multiple archives and not merging them.
+Cloud load the PNG, the ICO and the custom archives and just add names and
+dimensions as I find them in the archives.
+
+### Check the dimension and type exists before creating a button for it
+
+This is for when downloading ICOs works again. It will never be false with the
+stock icons, but maybe I will add my own icons which won't have all four
+combinations of type and dimension.
