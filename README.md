@@ -76,3 +76,13 @@ combinations of type and dimension.
 
 - http://www.famfamfam.com/lab/icons/silk
 - https://p.yusukekamiyamane.com
+
+Keep these as separate ZIPs and show source by each icon's entry.
+
+### Prepare an empty array buffer of the HEAD response size and a download map
+
+Provide an abstraction for accessing slices of the buffer which either provides
+if already downloaded as capture by the map (an array of ranges) or downloads,
+marks in the map and then provides. This way icons remain cached once downloaded.
+
+Maybe pull this out to its own library.
