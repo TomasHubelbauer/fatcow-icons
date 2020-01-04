@@ -1,28 +1,131 @@
+const archiveUrl = 'fatcow-hosting-icons-3.9.2.zip';
+let icons;
+
 window.addEventListener('load', async () => {
-  const response = await fetch('filename-list.txt');
-  const text = await response.text();
+  // Download the HEAD response to find out what the size of the archive is
+  const headResponse = await fetch(archiveUrl, {
+    method: 'HEAD'
+  });
 
-  const resultsDiv = document.getElementById('resultsDiv');
+  const archiveSize = Number(headResponse.headers.get('Content-Length'));
 
-  let fileNames = text.split('\n');
+  let dataView;
 
-  // Remove the last element caused by the newline at the end of the file
-  // Do this at runtime because it's too easy to not notice an IDE added it
-  if (fileNames[fileNames.length - 1] === '') {
-    fileNames.pop();
+  // Search for the end of central directory record signature (0x06054b50)
+  let eocdOffsetFromEnd;
+  do {
+    // TODO: Fetch only the missing preceeding part not it and the part we already have when retrying
+    const rangeOffetFromEnd = dataView ? dataView.byteLength * 2 : 1024;
+    console.log(`Downloading the last ${rangeOffetFromEnd}b from the end`);
+
+    // Download the last few kilobytes of the file to look for the end of central directory record
+    // https://en.wikipedia.org/wiki/Zip_(file_format)#End_of_central_directory_record_(EOCD)
+    const response = await fetch(archiveUrl, {
+      headers: { 'Range': `bytes=${archiveSize - rangeOffetFromEnd}-${archiveSize}` }
+    });
+
+    const arrayBuffer = await response.arrayBuffer();
+    dataView = new DataView(arrayBuffer);
+
+    for (let index = 4; index < dataView.byteLength - 4; index++) {
+      if (dataView.getUint8(dataView.byteLength - index + 3) !== 0x06) {
+        continue;
+      }
+
+      if (dataView.getUint8(dataView.byteLength - index + 2) !== 0x05) {
+        continue;
+      }
+
+      if (dataView.getUint8(dataView.byteLength - index + 1) !== 0x4b) {
+        continue;
+      }
+
+      if (dataView.getUint8(dataView.byteLength - index) !== 0x50) {
+        continue;
+      }
+
+      eocdOffsetFromEnd = index;
+      break;
+    }
   }
+  // TODO: Stop at a threshold so on bug we avoid progressively downloading the whole archive for nothing
+  while (!eocdOffsetFromEnd);
+
+  // Parse the central directory record offset and size
+  const cdOffsetFromStart = dataView.getUint32(dataView.byteLength - eocdOffsetFromEnd + 16, true);
+  const cdSize = dataView.getUint32(dataView.byteLength - eocdOffsetFromEnd + 12, true);
+
+  // Fetch yet larger chunk if the central directory structure if out of the bounds still
+  if (archiveSize - cdOffsetFromStart > dataView.byteLength) {
+    console.log(`Downloading an exact range (${cdOffsetFromStart}-${cdOffsetFromStart + cdSize} (${cdSize}b)) with the central directory structure`);
+
+    // TODO: Download only the missing portion not the entire central directory structure range
+    const response = await fetch(archiveUrl, {
+      headers: { 'Range': `bytes=${cdOffsetFromStart}-${cdOffsetFromStart + cdSize}` }
+    });
+
+    const arrayBuffer = await response.arrayBuffer();
+    dataView = new DataView(arrayBuffer);
+  }
+  // TODO: Reconfigure the data view to capture the entire central directory exactly
+  else {
+    throw new Error('TODO: Reset the data view to contain only the central directory');
+  }
+
+  console.log('Parsing entries');
+  icons = {};
+  let index = 0;
+
+  // TODO: Filter out directory entries better (probably using internal/external file attributes at 38/38)
+  do {
+    const fileNameLength = dataView.getUint16(index + 28, true);
+    const extraFieldLength = dataView.getUint16(index + 30, true);
+    const fileCommentLength = dataView.getUint16(index + 32, true);
+    const name = String.fromCharCode(...new Uint8Array(dataView.buffer, index + 46, fileNameLength));
+    const offset = dataView.getUint32(index + 42, true);
+    const size = 30 /* local header */ + fileNameLength + dataView.getUint32(index + 20, true);
+
+    index = index + 46 + fileNameLength + extraFieldLength + fileCommentLength;
+
+    // Filter out the 16x16 directory entry
+    if (name === 'FatCow_Icons16x16/') {
+      continue;
+    }
+
+    // Ditch all 32x32 entries (we will use the 16x16 names)
+    if (name === 'FatCow_Icons32x32/') {
+      continue;
+    }
+
+    const dimension = name.slice('FatCow_Icons'.length, 'FatCow_Icons__'.length);
+    const icon = name.slice('FatCow_Icons__x__/'.length).slice(0, -'.png'.length);
+
+    if (!icons[icon]) {
+      icons[icon] = {};
+    }
+
+    icons[icon][dimension] = { name, offset, size, dimension };
+  }
+  while (index < dataView.byteLength - 1);
+
+  console.log('Parsed', Object.keys(icons).length, 'entries');
 
   if (location.search) {
     const filter = new URLSearchParams(location.search).get('search').trim();
-    fileNames = fileNames.filter(fileName => fileName.toUpperCase().includes(filter.toUpperCase()));
+    const keys = Object.keys(icons).filter(icon => icon.toUpperCase().includes(filter.toUpperCase()));
+    const _icons = icons;
+    icons = {};
+    for (const key of keys) {
+      icons[key] = _icons[key];
+    }
 
     document.getElementsByName('search')[0].value = filter;
-    resultsDiv.textContent = `Showing ${fileNames.length} matching icons`;
+    resultsDiv.textContent = `Showing ${Object.keys(icons).length} matching icons`;
   } else {
-    resultsDiv.textContent = `Showing all ${fileNames.length} icons`;
+    resultsDiv.textContent = `Showing all ${Object.keys(icons).length} icons`;
   }
 
-  renderList(fileNames);
+  renderList();
   windowList();
   window.addEventListener('scroll', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
 
@@ -30,20 +133,52 @@ window.addEventListener('load', async () => {
   window.addEventListener('resize', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
 });
 
-function renderList(fileNames) {
+function renderList() {
   const iconsDiv = document.getElementById('iconsDiv');
   iconsDiv.innerHTML = '';
 
   const fragment = document.createDocumentFragment();
 
-  for (let fileName of fileNames) {
+  for (let key of Object.keys(icons)) {
     const iconDiv = document.createElement('div');
     iconDiv.className = 'iconDiv';
-    iconDiv.id = fileName;
+    iconDiv.id = key;
     fragment.append(iconDiv);
   }
 
   iconsDiv.append(fragment);
+}
+
+async function extractIcon(fileName, dimension) {
+  const entry = icons[fileName][dimension];
+
+  const response = await fetch(archiveUrl, {
+    headers: { 'Range': `bytes=${entry.offset}-${entry.offset + entry.size}` }
+  });
+
+  let arrayBuffer = await response.arrayBuffer();
+  arrayBuffer = arrayBuffer.slice(30 + entry.name.length);
+  const blob = new Blob([UZIP.inflateRaw(new Uint8Array(arrayBuffer))], { type: 'image/png' });
+
+  return URL.createObjectURL(blob);
+}
+
+async function handleDownloadButtonClick(event) {
+  const name = event.currentTarget.dataset.name;
+  const type = event.currentTarget.dataset.type;
+  const dimension = event.currentTarget.dataset.dimension;
+
+  if (type === 'ico') {
+    alert('Sorry, ICO downloads are not available at the moment. Contact me at tomas@hubelbauer.net');
+    return;
+  }
+
+  const url = await extractIcon(name, dimension);
+  const downloadA = document.getElementById('downloadA');
+  downloadA.href = url;
+  downloadA.target = '_blank';
+  downloadA.download = `${name}-${dimension}.${type}`;
+  downloadA.click();
 }
 
 function renderItem(fileName) {
@@ -64,41 +199,51 @@ function renderItem(fileName) {
   const icon16Img = document.createElement('img');
   icon16Img.title = fileName + ' 16';
   icon16Img.className = 'icon16';
-  icon16Img.src = '16-png/' + fileName + '.png';
+  extractIcon(fileName, '16')
+    .then(url => icon16Img.src = url)
+    .catch(console.log)
+    ;
 
   const icon32Img = document.createElement('img');
   icon32Img.title = fileName + ' 32';
   icon32Img.className = 'icon32';
-  icon32Img.src = '32-png/' + fileName + '.png';
+  extractIcon(fileName, '32')
+    .then(url => icon32Img.src = url)
+    .catch(console.log)
+    ;
 
   const nameSpan = document.createElement('span');
   nameSpan.textContent = fileName.replace(/_/g, ' ');
 
-  const png16A = document.createElement('a');
-  png16A.textContent = '16\npng';
-  png16A.href = '16-png/' + fileName + '.png';
-  png16A.target = '_blank';
-  png16A.download = '16-' + fileName + '.png';
+  const png16Button = document.createElement('button');
+  png16Button.textContent = '16\npng';
+  png16Button.dataset.name = fileName;
+  png16Button.dataset.type = 'png';
+  png16Button.dataset.dimension = '16';
+  png16Button.addEventListener('click', handleDownloadButtonClick);
 
-  const png32A = document.createElement('a');
-  png32A.textContent = '32\npng';
-  png32A.href = '32-png/' + fileName + '.png';
-  png32A.target = '_blank';
-  png32A.download = '32-' + fileName + '.png';
+  const png32Button = document.createElement('button');
+  png32Button.textContent = '32\npng';
+  png32Button.dataset.name = fileName;
+  png32Button.dataset.type = 'png';
+  png32Button.dataset.dimension = '32';
+  png32Button.addEventListener('click', handleDownloadButtonClick);
 
-  const ico16A = document.createElement('a');
-  ico16A.textContent = '16\nico';
-  ico16A.href = '16-ico/' + fileName + '.ico';
-  ico16A.target = '_blank';
-  ico16A.download = '16-' + fileName + '.ico';
+  const ico16Button = document.createElement('button');
+  ico16Button.textContent = '16\nico';
+  ico16Button.dataset.name = fileName;
+  ico16Button.dataset.type = 'ico';
+  ico16Button.dataset.dimension = '16';
+  ico16Button.addEventListener('click', handleDownloadButtonClick);
 
-  const ico32A = document.createElement('a');
-  ico32A.textContent = '32\nico';
-  ico32A.href = '32-ico/' + fileName + '.ico';
-  ico32A.target = '_blank';
-  ico32A.download = '32-' + fileName + '.ico';
+  const ico32Button = document.createElement('button');
+  ico32Button.textContent = '32\nico';
+  ico32Button.dataset.name = fileName;
+  ico32Button.dataset.type = 'ico';
+  ico32Button.dataset.dimension = '32';
+  ico32Button.addEventListener('click', handleDownloadButtonClick);
 
-  iconDiv.append(icon16Img, icon32Img, nameSpan, png16A, png32A, ico16A, ico32A);
+  iconDiv.append(icon16Img, icon32Img, nameSpan, png16Button, png32Button, ico16Button, ico32Button);
 }
 
 let scrollTimeout;

@@ -25,7 +25,7 @@ input {
   .iconDiv {
     display: inline-flex;
     margin-right: 1ex;
-    width: 300px;
+    width: 350px;
   }
 }
 
@@ -48,9 +48,15 @@ input {
   flex: 1;
 }
 
-.iconDiv a {
+.iconDiv button {
+  border: none;
+  cursor: pointer;
   font-size: smaller;
   margin-left: 1ex;
   text-align: center;
   white-space: pre;
+}
+
+#downloadA {
+  display: none;
 }

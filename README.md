@@ -13,10 +13,13 @@ it just to grab a single icon every now and then is a major pain for me.
 
 This web app makes it much more convenient.
 
+## Running
+
 To run locally, use `npx serve .` so that `fetch` works (disallowed in `file://`).
 
-**Note:** `google_adsense` is renamed to `google_sense` and `advertising` is to
-`adverting` to avoid having the images blocked by uBlock Origin!
+## UZIP
+
+UZIP comes from https://github.com/photopea/UZIP.js.
 
 ## To-Do
 
@@ -39,7 +42,16 @@ This is despite the CSS media query looking correct.
 Update the form to do the search inline and update the URL using `replaceState` to
 not pollute history.
 
-### Integrate the WIP ZIP extractor functionality and force push new history
+### Extract the `inflareRaw` logic from UZIP and tailor it to this application
 
-See the `wip` directory and https://tomashubelbauer.github.io/fatcow-icons/wip
-for details.
+### Enable ICO downloads by loading also the ICO ZIP and extracting from it
+
+Consider maybe packaging them together so I only have to download a single
+archive. This has the downside of necessary manual processing on new version
+release, but seeing as new version of FatCow icons hasn't been released in
+around forever, this should be a non-issue.
+
+### Consider adding tabs for the `grey` and `colors` variants of the icons
+
+I don't personally use them, but someone might find that useful. I've removed
+their archives from the repository until this is done.
