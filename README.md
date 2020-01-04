@@ -44,6 +44,8 @@ not pollute history.
 
 ### Extract the `inflareRaw` logic from UZIP and tailor it to this application
 
+https://github.com/photopea/UZIP.js/blob/master/UZIP.js#L563
+
 ### Enable ICO downloads by loading also the ICO ZIP and extracting from it
 
 Consider maybe packaging them together so I only have to download a single
