@@ -71,3 +71,8 @@ dimensions as I find them in the archives.
 This is for when downloading ICOs works again. It will never be false with the
 stock icons, but maybe I will add my own icons which won't have all four
 combinations of type and dimension.
+
+### Consider also adding Silk and Fugue icons or creating spin-off apps for them
+
+- http://www.famfamfam.com/lab/icons/silk
+- https://p.yusukekamiyamane.com
