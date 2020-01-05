@@ -262,9 +262,10 @@ function windowList() {
         window.setTimeout(renderItem, 100, iconDiv.id);
       }
     } else {
+      // Clear the element if rendered but not visible
       if (iconDiv.textContent !== '') {
-        // Clear the element if rendered but not visible
-        // TODO: Properly dispose of the img URLs here to avoid leaking memory
+        // Release the object URLs to avoid leaking their memory
+        iconDiv.querySelectorAll('img').forEach(img => URL.revokeObjectURL(img.src));
         iconDiv.textContent = '';
       }
     }

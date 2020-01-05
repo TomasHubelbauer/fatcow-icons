@@ -32,6 +32,9 @@ input {
 .iconDiv img {
   flex-shrink: 0;
   margin-right: 1ex;
+
+  /* Prevent `title` being used as interim content while loading from spilling outside of the img bounding box */
+  overflow: hidden;
 }
 
 .iconDiv img.icon16 {

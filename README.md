@@ -58,8 +58,6 @@ around forever, this should be a non-issue.
 I don't personally use them, but someone might find that useful. I've removed
 their archives from the repository until this is done.
 
-### Avoid leaking object URL memory when destroying `imgs` emptying their `divs`
-
 ### Add custom icons made in this same style for the things I'm missing
 
 Document which come from where.
@@ -88,3 +86,16 @@ if already downloaded as capture by the map (an array of ranges) or downloads,
 marks in the map and then provides. This way icons remain cached once downloaded.
 
 Maybe pull this out to its own library.
+
+### Figure out why scrolling up causes the lines to jump in Firefox (not mobile)
+
+It jumps in Firefox even though the icon div is always 40px, in hidden as well
+as visible state. The same thing doesn't happen in mobile Safari, nor does it
+happen in desktop Chrome.
+
+### Indicate the image is loading by settings its `src` to loader first
+
+Set `img src` to a loader image file URL and then in the issued fire and forget
+promise's resolution handler, reset it to the actual blob URL.
+
+This will avoid flashing empty boxes / img titles in boxes as fallback values.
