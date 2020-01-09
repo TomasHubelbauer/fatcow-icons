@@ -108,22 +108,15 @@ window.addEventListener('load', async () => {
   }
   while (index < dataView.byteLength - 1);
 
-  console.log('Parsed', Object.keys(icons).length, 'entries');
-
   if (location.search) {
-    const filter = new URLSearchParams(location.search).get('search').trim();
-    const keys = Object.keys(icons).filter(icon => icon.toUpperCase().includes(filter.toUpperCase()));
-    const _icons = icons;
-    icons = {};
-    for (const key of keys) {
-      icons[key] = _icons[key];
-    }
-
-    document.getElementsByName('search')[0].value = filter;
-    resultsDiv.textContent = `Showing ${Object.keys(icons).length} matching icons`;
-  } else {
-    resultsDiv.textContent = `Showing all ${Object.keys(icons).length} icons`;
+    document.getElementsByName('search')[0].value = location.search.slice('?'.length);
   }
+
+  document.getElementsByName('search')[0].addEventListener('input', event => {
+    history.replaceState(null, null, '?' + event.currentTarget.value);
+    renderList();
+    windowList();
+  });
 
   renderList();
   windowList();
@@ -134,12 +127,27 @@ window.addEventListener('load', async () => {
 });
 
 function renderList() {
+  let filteredIcons = icons;
+  if (location.search) {
+    filteredIcons = {};
+    const filter = location.search.slice('?'.length);
+    const keys = Object.keys(icons).filter(icon => icon.toUpperCase().includes(filter.toUpperCase()));
+    for (const key of keys) {
+      filteredIcons[key] = icons[key];
+    }
+
+    resultsDiv.textContent = `Showing ${Object.keys(filteredIcons).length} matching icons`;
+  }
+  else {
+    resultsDiv.textContent = `Showing all ${Object.keys(icons).length} icons`;
+  }
+
   const iconsDiv = document.getElementById('iconsDiv');
   iconsDiv.innerHTML = '';
 
   const fragment = document.createDocumentFragment();
 
-  for (let key of Object.keys(icons)) {
+  for (let key of Object.keys(filteredIcons)) {
     const iconDiv = document.createElement('div');
     iconDiv.className = 'iconDiv';
     iconDiv.id = key;
@@ -183,6 +191,11 @@ async function handleDownloadButtonClick(event) {
 
 function renderItem(fileName) {
   const iconDiv = document.getElementById(fileName);
+
+  // Ignore if this is being called while the list is being rebuilt (`innerHTML = ''`)
+  if (iconDiv === null) {
+    return;
+  }
 
   // Double check the element is still on the screen since it has been requested
   const boundingClientRect = iconDiv.getBoundingClientRect();

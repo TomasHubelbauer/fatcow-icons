@@ -30,17 +30,12 @@ Storing it in the local storage should be sufficient.
 
 ### Consider aliasing icons with common synonyms
 
-(how to tell? Google Analytics for when a user adds a custom alias?) by default by
-placing another file in the repo with the aliases or adding it to `filenames.txt`.
+How to tell? Google Analytics for when a user adds a custom alias?
 
-### Figure out why the multi-column layout doesn't kick in in iOS Safari in landscape
-
-This is despite the CSS media query looking correct.
+For now probably placing another file in the repo with the aliases.
+Or just keeping it in the local storage.
 
 ### Add a screenshot and a script to generate one
-
-Update the form to do the search inline and update the URL using `replaceState` to
-not pollute history.
 
 ### Extract the `inflareRaw` logic from UZIP and tailor it to this application
 
