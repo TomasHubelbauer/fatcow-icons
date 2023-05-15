@@ -14,11 +14,16 @@ export default async function extractIcon(icons, /** @type {string} */ fileName,
 
   // See if `new Response` constructor can be used instead of `UZIP.inflateRaw`
   // TODO: Remove this once tested out
-  console.log('UZIP decoded:', uint8Array.slice(0, 100));
-  for (const encoding of ['']) {
-    const response = new Response(arrayBuffer, { headers: { 'Content-Encoding': encoding } });
-    const arrayBuffer2 = await response.arrayBuffer();
-    console.log(encoding + ' decoded:', arrayBuffer2.slice(0, 100), new Uint8Array(arrayBuffer2).slice(0, 100));
+  console.log(fileName, 'UZIP decoded:', uint8Array.slice(0, 100));
+  for (const encoding of ['gzip', 'compress', 'deflate', 'br']) {
+    try {
+      const response = new Response(arrayBuffer, { headers: { 'Content-Encoding': encoding } });
+      const arrayBuffer2 = await response.arrayBuffer();
+      console.log(fileName, encoding, 'decoded:', arrayBuffer2.slice(0, 100), new Uint8Array(arrayBuffer2).slice(0, 100));
+    }
+    catch (error) {
+      console.log(fileName, encoding, 'decoding failed', error);
+    }
   }
 
   return URL.createObjectURL(blob);
