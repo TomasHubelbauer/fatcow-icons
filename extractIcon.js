@@ -12,22 +12,11 @@ export default async function extractIcon(icons, /** @type {string} */ fileName,
   const uint8Array = UZIP.inflateRaw(new Uint8Array(arrayBuffer));
   const blob = new Blob([uint8Array], { type: 'image/png' });
 
-  // See if `new Response` constructor can be used instead of `UZIP.inflateRaw`
-  // TODO: Remove this once tested out
-  console.log(dimension, fileName, 'UZIP decoded:', uint8Array.slice(0, 100), uint8Array.length);
-  for (const encoding of [undefined, 'gzip', 'compress', 'deflate', 'br']) {
-    try {
-      const response = new Response(arrayBuffer, encoding ? { headers: { 'Content-Encoding': encoding } } : undefined);
-      const arrayBuffer2 = await response.arrayBuffer();
-
-      // TODO: Figure out why the first 5 bytes are there compared to UZIP?
-      const uint8Array2 = new Uint8Array(arrayBuffer2.slice(5));
-      console.log(dimension, fileName, encoding, 'decoded:', uint8Array2.slice(0, 100), uint8Array2.length);
-    }
-    catch (error) {
-      console.log(dimension, fileName, encoding, 'decoding failed', error);
-    }
-  }
+  console.log(dimension, fileName, 'UZIP decoded:', uint8Array.slice(0, 10), uint8Array.slice(-10), uint8Array.length);
+  const response2 = new Response(arrayBuffer);
+  const arrayBuffer2 = await response2.arrayBuffer();
+  const uint8Array2 = new Uint8Array(arrayBuffer2.slice(5, -1));
+  console.log(dimension, fileName, 'Response decoded:', uint8Array2.slice(0, 10), uint8Array2.slice(-10), uint8Array2.length);
 
   return URL.createObjectURL(blob);
 }
