@@ -19,6 +19,13 @@ To run locally, use `npx serve .` so that `fetch` works (disallowed in `file://`
 
 ## To-Do
 
+### Fix using `new Response` over UZIP.js having broken decoding some icons
+
+I was elated to find `new Response` can be used to decode the icons from the
+ZIP slice instead of having to use the UZIP.js dependency but it seems with it
+some icons are not decoding correctly.
+Let's fix that or revert back to using UZIP.js.
+
 ### Consider allowing to associate custom aliases with the icons which
 
 These would be taken into an account in search. This would be helpful with synonyms etc.
