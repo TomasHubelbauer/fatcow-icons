@@ -15,11 +15,13 @@ export default async function extractIcon(icons, /** @type {string} */ fileName,
   // See if `new Response` constructor can be used instead of `UZIP.inflateRaw`
   // TODO: Remove this once tested out
   console.log(dimension, fileName, 'UZIP decoded:', uint8Array.slice(0, 100), uint8Array.length);
-  for (const encoding of ['gzip', 'compress', 'deflate', 'br']) {
+  for (const encoding of [undefined, 'gzip', 'compress', 'deflate', 'br']) {
     try {
-      const response = new Response(arrayBuffer, { headers: { 'Content-Encoding': encoding } });
+      const response = new Response(arrayBuffer, encoding ? { headers: { 'Content-Encoding': encoding } : undefined });
       const arrayBuffer2 = await response.arrayBuffer();
-      const uint8Array2 = new Uint8Array(arrayBuffer2);
+
+      // TODO: Figure out why the first 5 bytes are there compared to UZIP?
+      const uint8Array2 = new Uint8Array(arrayBuffer2.slice(5));
       console.log(dimension, fileName, encoding, 'decoded:', uint8Array2.slice(0, 100), uint8Array2.length);
     }
     catch (error) {
