@@ -16,6 +16,9 @@ document.getElementsByName('search')[0].addEventListener('input', event => {
   windowList();
 });
 
+let scrollTimeout;
+let lastScroll;
+
 renderList();
 windowList();
 window.addEventListener('scroll', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
@@ -144,8 +147,6 @@ function renderItem(fileName) {
   iconDiv.append(icon16Img, icon32Img, nameA, png16Button, png32Button, ico16Button, ico32Button);
 }
 
-let scrollTimeout;
-let lastScroll;
 function windowList() {
   const iconDivs = [...document.getElementsByClassName('iconDiv')];
   if (window.scrollY < lastScroll) {
