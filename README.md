@@ -17,10 +17,6 @@ This web app makes it much more convenient.
 
 To run locally, use `npx serve .` so that `fetch` works (disallowed in `file://`).
 
-## UZIP
-
-UZIP comes from https://github.com/photopea/UZIP.js.
-
 ## To-Do
 
 ### Consider allowing to associate custom aliases with the icons which
@@ -36,10 +32,6 @@ For now probably placing another file in the repo with the aliases.
 Or just keeping it in the local storage.
 
 ### Add a screenshot and a script to generate one
-
-### Extract the `inflareRaw` logic from UZIP and tailor it to this application
-
-https://github.com/photopea/UZIP.js/blob/master/UZIP.js#L563
 
 ### Enable ICO downloads by loading also the ICO ZIP and extracting from it
 

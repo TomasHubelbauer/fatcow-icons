@@ -7,19 +7,12 @@ export default async function extractIcon(icons, /** @type {string} */ fileName,
     headers: { 'Range': `bytes=${entry.offset}-${entry.offset + entry.size}` }
   });
 
-  let arrayBuffer = await response.arrayBuffer();
-  arrayBuffer = arrayBuffer.slice(30 + entry.name.length);
-  const uint8Array = UZIP.inflateRaw(new Uint8Array(arrayBuffer));
+  // Use the `Response` constructor to decode the encoded ZIP file slice
+  const arrayBuffer = await new Response(await response.arrayBuffer()).arrayBuffer();
+
+  // Note that the first 30+ bytes are the local file header and file name
+  // Note that I don't know why the extra 5 bytes at the start and 1 at the end are there
+  const uint8Array = new Uint8Array(arrayBuffer.slice(30 + entry.name.length).slice(5, -1));
   const blob = new Blob([uint8Array], { type: 'image/png' });
-
-  console.log(dimension, fileName, 'UZIP decoded:', uint8Array.slice(0, 10), uint8Array.slice(-10), uint8Array.length);
-  const response2 = new Response(arrayBuffer);
-  const arrayBuffer2 = await response2.arrayBuffer();
-  const uint8Array2 = new Uint8Array(arrayBuffer2.slice(5, -1));
-  console.log(dimension, fileName, 'Response decoded:', uint8Array2.slice(0, 10), uint8Array2.slice(-10), uint8Array2.length);
-
-  const uint8Array3 = new Uint8Array(arrayBuffer)
-  console.log(dimension, fileName, 'Response encoded:', uint8Array3.slice(0, 10), uint8Array3.slice(-10), uint8Array3.length);
-
   return URL.createObjectURL(blob);
 }
