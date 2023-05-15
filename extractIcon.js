@@ -17,7 +17,7 @@ export default async function extractIcon(icons, /** @type {string} */ fileName,
   console.log(dimension, fileName, 'UZIP decoded:', uint8Array.slice(0, 100), uint8Array.length);
   for (const encoding of [undefined, 'gzip', 'compress', 'deflate', 'br']) {
     try {
-      const response = new Response(arrayBuffer, encoding ? { headers: { 'Content-Encoding': encoding } : undefined });
+      const response = new Response(arrayBuffer, encoding ? { headers: { 'Content-Encoding': encoding } } : undefined);
       const arrayBuffer2 = await response.arrayBuffer();
 
       // TODO: Figure out why the first 5 bytes are there compared to UZIP?
