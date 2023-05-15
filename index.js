@@ -3,27 +3,25 @@ import extractIcon from './extractIcon.js';
 
 let icons;
 
-window.addEventListener('load', async () => {
-  const iconsDiv = document.getElementById('iconsDiv');
-  icons = await parseEntries(message => iconsDiv.textContent = message);
+const iconsDiv = document.getElementById('iconsDiv');
+icons = await parseEntries(message => iconsDiv.textContent = message);
 
-  if (location.search) {
-    document.getElementsByName('search')[0].value = location.search.slice('?'.length);
-  }
+if (location.search) {
+  document.getElementsByName('search')[0].value = location.search.slice('?'.length);
+}
 
-  document.getElementsByName('search')[0].addEventListener('input', event => {
-    history.replaceState(null, null, '?' + event.currentTarget.value);
-    renderList();
-    windowList();
-  });
-
+document.getElementsByName('search')[0].addEventListener('input', event => {
+  history.replaceState(null, null, '?' + event.currentTarget.value);
   renderList();
   windowList();
-  window.addEventListener('scroll', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
-
-  // Handle `resize` for debugging responsive layout, no harm done leaving this in
-  window.addEventListener('resize', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
 });
+
+renderList();
+windowList();
+window.addEventListener('scroll', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
+
+// Handle `resize` for debugging responsive layout, no harm done leaving this in
+window.addEventListener('resize', handleWindowScroll, { passive: true /* We do not need `preventDefault` */ });
 
 function renderList() {
   let filteredIcons = icons;

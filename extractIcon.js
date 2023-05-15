@@ -9,7 +9,17 @@ export default async function extractIcon(icons, /** @type {string} */ fileName,
 
   let arrayBuffer = await response.arrayBuffer();
   arrayBuffer = arrayBuffer.slice(30 + entry.name.length);
-  const blob = new Blob([UZIP.inflateRaw(new Uint8Array(arrayBuffer))], { type: 'image/png' });
+  const uint8Array = UZIP.inflateRaw(new Uint8Array(arrayBuffer));
+  const blob = new Blob([uint8Array], { type: 'image/png' });
+
+  // See if `new Response` constructor can be used instead of `UZIP.inflateRaw`
+  // TODO: Remove this once tested out
+  console.log('UZIP decoded:', uint8Array.slice(0, 100));
+  for (const encoding of ['']) {
+    const response = new Response(arrayBuffer, { headers: { 'Content-Encoding': encoding } });
+    const arrayBuffer2 = await response.arrayBuffer();
+    console.log(encoding + ' decoded:', arrayBuffer2.slice(0, 100), new Uint8Array(arrayBuffer2).slice(0, 100));
+  }
 
   return URL.createObjectURL(blob);
 }
