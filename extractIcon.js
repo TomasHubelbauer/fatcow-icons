@@ -18,5 +18,8 @@ export default async function extractIcon(icons, /** @type {string} */ fileName,
   const uint8Array2 = new Uint8Array(arrayBuffer2.slice(5, -1));
   console.log(dimension, fileName, 'Response decoded:', uint8Array2.slice(0, 10), uint8Array2.slice(-10), uint8Array2.length);
 
+  const uint8Array3 = new Uint8Array(arrayBuffer)
+  console.log(dimension, fileName, 'Response encoded:', uint8Array3.slice(0, 10), uint8Array3.slice(-10), uint8Array3.length);
+
   return URL.createObjectURL(blob);
 }
