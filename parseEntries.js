@@ -24,7 +24,13 @@ export default async function parseEntries(log) {
     });
 
     const arrayBuffer = await response.arrayBuffer();
-    dataView = new DataView(arrayBuffer);
+    if (+response.headers.get('Content-Length') === archiveSize) {
+      console.log('Entire archive downloaded while searching for EOCD as the server does not support range requests');
+      dataView = new DataView(arrayBuffer.slice(archiveSize - rangeOffetFromEnd, archiveSize));
+    }
+    else {
+      dataView = new DataView(arrayBuffer);
+    }
 
     for (let index = 4; index < dataView.byteLength - 4; index++) {
       if (dataView.getUint8(dataView.byteLength - index + 3) !== 0x06) {
@@ -64,7 +70,13 @@ export default async function parseEntries(log) {
     });
 
     const arrayBuffer = await response.arrayBuffer();
-    dataView = new DataView(arrayBuffer);
+    if (+response.headers.get('Content-Length') === archiveSize) {
+      console.log('Entire archive downloaded while fetching exact EOCD as the server does not support range requests');
+      dataView = new DataView(arrayBuffer.slice(cdOffsetFromStart, cdOffsetFromStart + cdSize));
+    }
+    else {
+      dataView = new DataView(arrayBuffer);
+    }
   }
   // TODO: Reconfigure the data view to capture the entire central directory exactly
   else {
@@ -77,13 +89,19 @@ export default async function parseEntries(log) {
 
   // TODO: Filter out directory entries better (probably using internal/external file attributes at 38/38)
   do {
+    // See https://en.wikipedia.org/wiki/ZIP_(file_format)#Central_directory_file_header
+    // Note that this is not https://en.wikipedia.org/wiki/ZIP_(file_format)#Local_file_header
+    const compressionMethod = dataView.getUint16(index + 8, true);
+    if (compressionMethod !== 0) {
+      throw new Error(`Unsupported compression method ${compressionMethod} - only store is supported`);
+    }
+
     const fileNameLength = dataView.getUint16(index + 28, true);
     const extraFieldLength = dataView.getUint16(index + 30, true);
     const fileCommentLength = dataView.getUint16(index + 32, true);
     const name = String.fromCharCode(...new Uint8Array(dataView.buffer, index + 46, fileNameLength));
     const offset = dataView.getUint32(index + 42, true);
     const size = 30 /* local header */ + fileNameLength + dataView.getUint32(index + 20, true);
-
     index = index + 46 + fileNameLength + extraFieldLength + fileCommentLength;
 
     // Filter out the 16x16 directory entry
